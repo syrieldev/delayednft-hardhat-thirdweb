@@ -82,6 +82,14 @@ https://blog.thirdweb.com/guides/get-started-with-the-contracts-sdk/
 basic
 https://portal.thirdweb.com/solidity/getting-started
 
-//
+// workflow hardhat//
+1. deploy (local hardhat)
+- IPFS handled by Pinata
+- constructor
+- batch upload of NFT (hard)
 
-//
+2. test
+- deploy
+- read NFT metadata
+- reveal
+- read revealed NFT meta data

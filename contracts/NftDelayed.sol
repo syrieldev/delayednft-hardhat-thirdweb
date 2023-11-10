@@ -2,10 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "@thirdweb-dev/contracts/base/ERC721DelayedReveal.sol";
-import "@thirdweb-dev/contracts/extension/NFTMetadata.sol";
+// import "@thirdweb-dev/contracts/extension/NFTMetadata.sol";
 
 
-contract NftDelayed is ERC721DelayedReveal, INFTMetadata {
+contract NftDelayed is ERC721DelayedReveal {
     constructor(
         address _defaultAdmin,
         string memory _name,
@@ -14,7 +14,7 @@ contract NftDelayed is ERC721DelayedReveal, INFTMetadata {
         uint128 _royaltyBps
     ) ERC721DelayedReveal(_defaultAdmin, _name, _symbol, _royaltyRecipient, _royaltyBps) {}
 
-    function verifyClaim(address _claimer, uint256 _quantity) public view virtual override {
-        require(_claimer != owner(), "Not authorized to claim");
-    }
+    // function verifyClaim(address _claimer, uint256 _quantity) public view virtual override {
+    //     require(_claimer != owner(), "Not authorized to claim");
+    // }
 }
