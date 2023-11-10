@@ -6,7 +6,9 @@ const fs = require("fs")
 const { thirdwebImages, uploadMetadata } = require("../utils/uploadThirdweb")
 
 const imagesLocation = "./images/nft/"
+const placeholderLocation = "./images/placeholder"
 let tokenUris = []
+let placeholderUris = []
 
 const metadataTemplate = {
     name: "",
@@ -32,6 +34,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     if (process.env.THIRDWEB_UPLOAD == "true") {
         tokenUris = await handleTokenUris(storage)
+        placeholderUris = await handlePlaceholderUris(storage)
     }
 
     if (chainId == 31337) {
@@ -89,6 +92,39 @@ async function handleTokenUris(storage) {
     }
 
     return tokenUris
+}
+
+async function handlePlaceholderUris(storage) {
+    const placeholderUploadResponse = await thirdwebImages(placeholderLocation, storage)
+    const metadataUploadContents = []
+    const metadataUploadNames = []
+    console.log(`placeholder : ${placeholderUploadResponse}`)
+
+    for (let i = 0; i < placeholderUploadResponse.length; i++) {
+        let placeholderUriMetadata = { ...metadataTemplate }
+        placeholderUriMetadata.name = `Placeholder ${i + 1}`
+        placeholderUriMetadata.description = `This is the description for Placeholder ${i + 1}`
+        placeholderUriMetadata.image = placeholderUploadResponse[i]
+
+        metadataUploadContents.push(placeholderUriMetadata)
+        metadataUploadNames.push(placeholderUriMetadata.name)
+    }
+
+    const metadataUpload = await storage.uploadBatch(
+        metadataUploadContents.map((content) => Buffer.from(JSON.stringify(content)))
+    )
+
+    if (metadataUpload && metadataUpload.length > 0) {
+        for (let i = 0; i < metadataUpload.length; i++) {
+            const metadataGatewayUrl = storage.resolveScheme(metadataUpload[i])
+            console.log(`Placeholder Metadata Gateway URL ${i + 1} - ${metadataGatewayUrl}`)
+            placeholderUris.push(metadataUpload[i])
+        }
+    } else {
+        console.error(`Error uploading metadata`)
+    }
+
+    return placeholderUris
 }
 
 module.exports.tags = ["all", "randomipfs", "main"]
